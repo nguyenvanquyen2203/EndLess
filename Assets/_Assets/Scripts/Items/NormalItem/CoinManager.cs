@@ -13,7 +13,8 @@ public class CoinManager : MonoBehaviour
     public float rotationSpeed = 60f;
     private float magnetActive;
     private Transform player;
-    public MagnetZone magnet;
+    public MagnetZone groundMagnet;
+    public MagnetZone airMagnet;
     // Start is called before the first frame update
     private void Awake()
     {
@@ -48,8 +49,11 @@ public class CoinManager : MonoBehaviour
                 i--;
             }
         }
-        if (magnetActive > 0) magnetActive -= Time.fixedDeltaTime;
-        else DisableMagnet();
+        if (magnetActive > 0)
+        {
+            magnetActive -= Time.fixedDeltaTime;
+            if (magnetActive <= 0f) DisableMagnet();
+        } 
         #endregion
     }
     public void Register(CoinItem coin)
@@ -75,8 +79,10 @@ public class CoinManager : MonoBehaviour
     {
         GameManager.Instance.ClearEvent.RemoveListener(DisableMagnet);
         magnetActive = 0f;
-        coinsMagnet.Clear();
-        magnet.gameObject.SetActive(false);
+        //coinsMagnet.Clear();
+        groundMagnet.gameObject.SetActive(false);
+        airMagnet.gameObject.SetActive(false);
         PowerUpInformation.Instance.CancelPU("Magnet");
     }
+    public bool IsMagnet() => magnetActive > 0f;
 }

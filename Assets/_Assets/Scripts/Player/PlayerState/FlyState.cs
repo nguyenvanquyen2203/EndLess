@@ -22,7 +22,7 @@ public class FlyState : p_State
 
     public override void ExitState()
     {
-        //throw new System.NotImplementedException();
+        controller.FlyRotate(false);
     }
 
     public override void FixedUpdate()
@@ -32,11 +32,12 @@ public class FlyState : p_State
 
     public override void TriggerEvent(PlayerController.OnTriggerEvent evt)
     {
-        throw new System.NotImplementedException();
+        
     }
 
     public override void Update()
     {
         controller.Move();
+        controller.FlyRotate();
     }
 }

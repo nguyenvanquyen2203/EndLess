@@ -3,6 +3,7 @@ using UnityEngine.Events;
 
 public class MapController : MonoBehaviour, IMapObserver
 {
+    private int indexMap;
     private MapSetUp mapSetup;
     private float mapSpeed;
     [HideInInspector] public UnityEvent activeEvent;
@@ -11,6 +12,7 @@ public class MapController : MonoBehaviour, IMapObserver
         mapSetup = GetComponent<MapSetUp>();
         if (mapSetup == null) mapSetup = gameObject.AddComponent<MapSetUp>();
     }
+    public void SetIndex(int _index) => indexMap = _index;
     public void ActiveMap(Vector3 pos, MapInfor mapInfor, float speed)
     {
         mapSpeed = speed;
@@ -22,16 +24,16 @@ public class MapController : MonoBehaviour, IMapObserver
     private void FixedUpdate()
     {
         transform.position += Vector3.back * mapSpeed * Time.fixedDeltaTime;
-        if (transform.position.z < -15f)
+        if (transform.position.z <= -15f)
         {
-            MapManager.Instance.SpawnMap(transform.position + Vector3.forward * 59f);
+            MapManager.Instance.SpawnMap();
             DisableMap();
         }
     }
     public void DisableMap()
     {
         mapSetup.DisableMap();
-        RaceObjPoolCtrl.Instance.AddGround(this);
+        RaceObjPoolCtrl.Instance.AddGround(this, indexMap);
         MapManager.Instance.RemoveObserver(this);
         gameObject.SetActive(false);
         activeEvent.RemoveAllListeners();
@@ -45,7 +47,7 @@ public class MapController : MonoBehaviour, IMapObserver
     public void Clear()
     {
         mapSetup.DisableMap();
-        RaceObjPoolCtrl.Instance.AddGround(this);
+        RaceObjPoolCtrl.Instance.AddGround(this, indexMap);
         gameObject.SetActive(false);
     }
     public void AddRaceObject(UnityAction action)

@@ -26,6 +26,7 @@ public class AudioManager : MonoBehaviour
             s.InitSrc(src);
             s.SetVolumn(audioData.SFXVolumn);
         }
+        PlayMusic("MenuMusic");
     }
     public void PlaySFX(string name)
     {
@@ -55,5 +56,9 @@ public class AudioManager : MonoBehaviour
     {
         if (type == Audio_Type.Music) return audioData.musicVolumn;
         return audioData.SFXVolumn;
+    }
+    public void PauseSFX()
+    {
+        foreach (var sound in SFXSounds) sound.PauseMusic();
     }
 }

@@ -9,11 +9,12 @@ public class RaceObjPoolCtrl : MonoBehaviour
     public static RaceObjPoolCtrl Instance { get { return instance; } }
     public List<RaceObject> raceObjs;
     public List<ItemObject> itemObjs;
-    public MapController ground;
+    public List<MapController> grounds;
+    public Material glowLine;
     //public int numberPool;
     private Dictionary<string, Queue<RaceObj>> racePools = new Dictionary<string, Queue<RaceObj>>();
     private Dictionary<string, List<ItemObj>> itemPools = new Dictionary<string, List<ItemObj>>();
-    private Queue<MapController> grounds = new Queue<MapController>();
+    private List<Queue<MapController>> groundPools = new List<Queue<MapController>>();
     // Start is called before the first frame update
     private void Awake()
     {
@@ -26,12 +27,19 @@ public class RaceObjPoolCtrl : MonoBehaviour
         {
             CreateItemPool(itemObj);
         }
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < grounds.Count; i++)
         {
-            MapController map = Instantiate(ground, transform);
-            map.gameObject.SetActive(false);
-            map.gameObject.name = i.ToString();
-            grounds.Enqueue(map);
+            Queue<MapController> temp = new Queue<MapController>();
+            for (int j = 0; j < 5; j++)
+            {
+                MapController map = Instantiate(grounds[i], transform);
+                map.SetIndex(i);
+                map.gameObject.SetActive(false);
+                map.gameObject.name = i.ToString();
+                temp.Enqueue(map);
+            }
+            groundPools.Add(temp);
+
         }
     }
     private RaceObj GetRaceObject(string nameRaceObj)
@@ -81,10 +89,10 @@ public class RaceObjPoolCtrl : MonoBehaviour
             itemPools.Add(itemObj.nameGO, listRaceObj);
             for (int i = 0; i < itemObj.numberPool; i++)
             {
-                ItemObj raceObject = Instantiate(itemObj.go, transform);
-                raceObject.SetName(itemObj.nameGO);
-                raceObject.gameObject.SetActive(false);
-                listRaceObj.Add(raceObject);
+                ItemObj itemObject = Instantiate(itemObj.go, transform);
+                itemObject.SetName(itemObj.nameGO);
+                itemObject.gameObject.SetActive(false);
+                listRaceObj.Add(itemObject);
             }
         }
     }
@@ -119,9 +127,8 @@ public class RaceObjPoolCtrl : MonoBehaviour
                     ItemObj itemObject = Instantiate(itemObj.go, transform);
                     itemObject.SetName(itemObj.nameGO);
                     itemObject.gameObject.SetActive(false);
-                    Material material = itemObjs.Find(x => x.nameGO == nameItemObj).glowM;
-                    if (GameModeManager.Instance.IsDay()) material = itemObjs.Find(x => x.nameGO == nameItemObj).nonGlowM;
-                    itemObject.SetMaterial(material);
+                    if (!GameModeManager.Instance.IsDay()) itemObject.AddOutLine(glowLine);
+                    else itemObject.RemoveOutLine();
                     value.Add(itemObject);
                 }
             }
@@ -161,31 +168,25 @@ public class RaceObjPoolCtrl : MonoBehaviour
             itemPools[itemObj.GetName()].Add(itemObj);
         }
     }
-    public void AddGround(MapController _map)
+    public void AddGround(MapController _map, int index)
     {
-        grounds.Enqueue(_map);
+        groundPools[index].Enqueue(_map);
     }
     public MapController ActiveGround()
     {
-        return grounds.Dequeue();
+        return groundPools[Random.Range(0,grounds.Count)].Dequeue();
     } 
     public void ChangeGlow(GameModeManager.ModeType modeType)
     {
         if (modeType == GameModeManager.ModeType.DayMode)
         {
             foreach (var items in itemPools)
-            {
-                Material material = itemObjs.Find(x => x.nameGO == items.Key).nonGlowM;
-                foreach (var item in items.Value) item.SetMaterial(material);
-            }
+                foreach (var item in items.Value) item.RemoveOutLine();
         }
         else
         {
             foreach (var items in itemPools)
-            {
-                Material material = itemObjs.Find(x => x.nameGO == items.Key).glowM;
-                foreach (var item in items.Value) item.SetMaterial(material);
-            }
+                foreach (var item in items.Value) item.AddOutLine(glowLine);
         }
     }
 }

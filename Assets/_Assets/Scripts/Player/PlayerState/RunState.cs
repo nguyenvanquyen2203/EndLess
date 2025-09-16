@@ -16,7 +16,6 @@ public class RunState : p_State
 
     public override void EnterState()
     {
-        Debug.Log("Enter RunState");
         controller.ChangeAnimState("Running", .2f);
     }
 
@@ -38,5 +37,6 @@ public class RunState : p_State
     public override void Update()
     {
         controller.Move();
+        controller.RotatePlayer();
     }
 }

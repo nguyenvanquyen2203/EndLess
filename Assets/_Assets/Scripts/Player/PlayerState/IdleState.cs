@@ -11,8 +11,7 @@ public class IdleState : p_State
 
     public override void ActionEvent(PlayerController.OnActionEvent evt)
     {
-        Debug.LogError("Error in Idle State");
-        //throw new System.NotImplementedException();
+        
     }
 
     public override void EnterState()
@@ -20,7 +19,7 @@ public class IdleState : p_State
         controller.gameObject.layer = LayerMask.NameToLayer("Player");
         controller.ChangeAnimState("Idle");
         controller.ResetPosition();
-        //controller.rb.useGravity = false;
+        controller.rb.useGravity = true;
     }
 
     public override void ExitState()
