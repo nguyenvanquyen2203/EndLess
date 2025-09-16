@@ -10,14 +10,14 @@ public class CoinData : MonoBehaviour
     private void Awake()
     {
         instance = this;
-        coin = 20;
+        coin = PlayerPrefs.GetInt("Coin", 0); ;
     }
     public int GetCoin() => coin;
     public void PlusCoin(int plusCoin)
     {
         coin += plusCoin;
-        //SaveCoin();
+        SaveCoin();
     }
-    //public void SaveCoin() => PlayerPrefs.SetInt("Coin", coin);
+    public void SaveCoin() => PlayerPrefs.SetInt("Coin", coin);
     
 }

@@ -77,7 +77,7 @@ public class ScoreManager : MonoBehaviour, IGameStateObserver
     {
         GameManager.Instance.ClearEvent.AddListener(DisableScoreBoost);
         scoreBoost.SetActive(false);
-        stopCount = true;
+        //stopCount = true;
         timeBoostScore = 0f;
         multiScore = 1;
         PowerUpInformation.Instance.CancelPU("ScoreBoost");

@@ -90,7 +90,7 @@ public class GameManager : GameStateSubject
         currentTime += Time.fixedDeltaTime;
         if (currentTime >= timeSpeedUp)
         {
-            currentMapSpeed++;
+            currentMapSpeed += 2;
             currentTime = 0;
             SetMapSpeed(currentMapSpeed);
         }
